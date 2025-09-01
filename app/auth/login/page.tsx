@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabaseClient } from '../../../lib/supabase';
 import OptimizedImage from '../../components/OptimizedImage';
+import Logo from '../../components/Logo';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -53,13 +54,7 @@ export default function LoginPage() {
         <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl p-10 border border-white/20">
           <div className="text-center mb-10">
             <div className="flex justify-center mb-6">
-              <OptimizedImage
-                src="https://static.readdy.ai/image/da957b73b52f8479bc0334fc9a75f115/041e654c36fcbc657f91abb67998ee52.png"
-                alt="Logo SoundRent"
-                className="h-48 w-auto"
-                fallbackText="SoundRent"
-                fallbackIcon="ri-speaker-line"
-              />
+              <Logo size="lg" className="scale-150" />
             </div>
             <p className="text-gray-600 text-lg">Connexion à votre espace</p>
           </div>
