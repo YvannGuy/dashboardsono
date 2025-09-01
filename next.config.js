@@ -1,14 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Suppression de output: "export" pour le développement
-  // output: "export", // Décommentez seulement pour la production
+  // Configuration pour la production
+  output: 'standalone',
   images: {
     unoptimized: true,
   },
   typescript: {
-    // ignoreBuildErrors: true,
+    ignoreBuildErrors: false,
   },
-  // Configuration de sécurité (fonctionne sans output: "export")
+  // Configuration de sécurité
   async headers() {
     return [
       {
@@ -33,6 +33,10 @@ const nextConfig = {
         ],
       },
     ];
+  },
+  // Configuration pour éviter les problèmes de hydration
+  experimental: {
+    // optimizeCss: true, // Désactivé temporairement
   },
 };
 

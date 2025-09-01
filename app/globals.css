@@ -2,3 +2,40 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Fixes pour éviter les problèmes d'affichage */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    font-family: var(--font-inter), system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  /* Éviter les problèmes de layout shift */
+  * {
+    box-sizing: border-box;
+  }
+}
+
+@layer components {
+  /* Classes utilitaires pour éviter les problèmes d'affichage */
+  .min-h-screen {
+    min-height: 100vh;
+    min-height: 100dvh; /* Support pour les navigateurs modernes */
+  }
+  
+  .h-screen {
+    height: 100vh;
+    height: 100dvh;
+  }
+}
+
+/* Fix pour les icônes Remix */
+[class*="ri-"] {
+  display: inline-block;
+  vertical-align: middle;
+}

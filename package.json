@@ -6,8 +6,11 @@
   "scripts": {
     "dev": "next dev",
     "build": "NODE_NO_WARNINGS=1 next build",
+    "build:prod": "NODE_ENV=production NODE_NO_WARNINGS=1 next build",
     "start": "next start",
-    "lint": "next lint"
+    "start:prod": "NODE_ENV=production next start",
+    "lint": "next lint",
+    "lint:fix": "next lint --fix"
   },
   "dependencies": {
     "next": "14.0.3",
