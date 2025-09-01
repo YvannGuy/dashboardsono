@@ -38,6 +38,16 @@ const nextConfig = {
   experimental: {
     // optimizeCss: true, // Désactivé temporairement
   },
+  
+  // Configuration pour les fichiers statiques
+  async rewrites() {
+    return [
+      {
+        source: '/logo.svg',
+        destination: '/public/logo.svg',
+      },
+    ];
+  },
 };
 
 module.exports = nextConfig;

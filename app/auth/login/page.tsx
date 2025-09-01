@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabaseClient } from '../../../lib/supabase';
 import OptimizedImage from '../../components/OptimizedImage';
-import Logo from '../../components/Logo';
+import InlineLogo from '../../components/InlineLogo';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -54,7 +54,7 @@ export default function LoginPage() {
         <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl p-10 border border-white/20">
           <div className="text-center mb-10">
             <div className="flex justify-center mb-6">
-              <Logo size="lg" className="scale-150" />
+              <InlineLogo size="xl" className="scale-125" />
             </div>
             <p className="text-gray-600 text-lg">Connexion à votre espace</p>
           </div>
