@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { supabase } from '../../lib/supabase';
+import { supabaseClient } from '../../lib/supabase';
 import AddExpenseForm from './AddExpenseForm';
 
 interface Expense {
@@ -24,7 +24,7 @@ export default function DepensesList() {
 
   const fetchExpenses = async () => {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await supabaseClient
         .from('expenses_simple')
         .select('*')
         .order('occurred_at', { ascending: false });
@@ -44,7 +44,7 @@ export default function DepensesList() {
     }
 
     try {
-      const { error } = await supabase
+      const { error } = await supabaseClient
         .from('expenses_simple')
         .delete()
         .eq('id', id);

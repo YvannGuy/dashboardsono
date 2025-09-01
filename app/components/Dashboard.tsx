@@ -2,15 +2,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { createClient } from '@supabase/supabase-js';
 import KPICard from './KPICard';
 import CalendarView from './CalendarView';
 import AlertCard from './AlertCard';
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+import { supabaseClient } from '../../lib/supabase';
 
 interface DashboardStats {
   reservationsMois: number;
@@ -55,7 +50,7 @@ export default function Dashboard() {
     const interval = setInterval(fetchDashboardData, 30000);
     
     // Écouter les changements en temps réel
-    const subscription = supabase
+    const subscription = supabaseClient
       .channel('dashboard-changes')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'reservations' }, handleRealtimeUpdate)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'paiements' }, handleRealtimeUpdate)
@@ -97,7 +92,7 @@ export default function Dashboard() {
     const in90Days = new Date(now.getTime() + (90 * 24 * 60 * 60 * 1000));
 
     // Réservations du mois avec gestion d'erreur
-    const { data: reservations, error: resError } = await supabase
+    const { data: reservations, error: resError } = await supabaseClient
       .from('reservations')
       .select('*')
       .gte('created_at', startOfMonth.toISOString())
@@ -106,7 +101,7 @@ export default function Dashboard() {
     if (resError) console.error('Erreur réservations:', resError);
 
     // CA payé ce mois avec gestion d'erreur
-    const { data: paiements, error: paiError } = await supabase
+    const { data: paiements, error: paiError } = await supabaseClient
       .from('paiements')
       .select('montant_eur')
       .gte('date_paiement', startOfMonth.toISOString())
@@ -115,7 +110,7 @@ export default function Dashboard() {
     if (paiError) console.error('Erreur paiements:', paiError);
 
     // Acomptes en attente
-    const { data: acomptes, error: acompteError } = await supabase
+    const { data: acomptes, error: acompteError } = await supabaseClient
       .from('reservations')
       .select('*')
       .eq('statut', 'Confirmée');
@@ -123,7 +118,7 @@ export default function Dashboard() {
     if (acompteError) console.error('Erreur acomptes:', acompteError);
 
     // Soldes à encaisser
-    const { data: soldes, error: soldeError } = await supabase
+    const { data: soldes, error: soldeError } = await supabaseClient
       .from('reservations')
       .select('solde_du')
       .eq('statut', 'Acompte payé');
@@ -131,7 +126,7 @@ export default function Dashboard() {
     if (soldeError) console.error('Erreur soldes:', soldeError);
 
     // Nombre total de clients avec requête plus fiable
-    const { data: clients, error: clientError } = await supabase
+    const { data: clients, error: clientError } = await supabaseClient
       .from('clients')
       .select('id, created_at')
       .order('created_at', { ascending: false });
@@ -139,7 +134,7 @@ export default function Dashboard() {
     if (clientError) console.error('Erreur clients:', clientError);
 
     // Réservations dans les 90 prochains jours
-    const { data: reservationsProchaines, error: prochainesError } = await supabase
+    const { data: reservationsProchaines, error: prochainesError } = await supabaseClient
       .from('reservations')
       .select('*')
       .gte('date_event', now.toISOString().split('T')[0])
@@ -149,7 +144,7 @@ export default function Dashboard() {
     if (prochainesError) console.error('Erreur réservations prochaines:', prochainesError);
 
     // Dépenses du mois
-    const { data: depenses, error: depensesError } = await supabase
+    const { data: depenses, error: depensesError } = await supabaseClient
       .from('expenses_simple')
       .select('amount_eur')
       .gte('occurred_at', startOfMonth.toISOString().split('T')[0])
@@ -157,9 +152,9 @@ export default function Dashboard() {
 
     if (depensesError) console.error('Erreur dépenses:', depensesError);
 
-    const caPayeMois = paiements?.reduce((sum, p) => sum + (p.montant_eur || 0), 0) || 0;
-    const soldesTotaux = soldes?.reduce((sum, s) => sum + (s.solde_du || 0), 0) || 0;
-    const depensesMois = depenses?.reduce((sum, d) => sum + (d.amount_eur || 0), 0) || 0;
+    const caPayeMois = paiements?.reduce((sum: number, p: any) => sum + (p.montant_eur || 0), 0) || 0;
+    const soldesTotaux = soldes?.reduce((sum: number, s: any) => sum + (s.solde_du || 0), 0) || 0;
+    const depensesMois = depenses?.reduce((sum: number, d: any) => sum + (d.amount_eur || 0), 0) || 0;
 
     const newStats = {
       reservationsMois: reservations?.length || 0,
@@ -179,8 +174,8 @@ export default function Dashboard() {
     const now = new Date();
     const in72Hours = new Date(now.getTime() + (72 * 60 * 60 * 1000));
 
-    // Acomptes non payés avec échéance < 72h
-    const { data: acomptesUrgents, error: acompteUrgentError } = await supabase
+        // Acomptes non payés avec échéance < 72h
+    const { data: acomptesUrgents, error: acompteUrgentError } = await supabaseClient
       .from('reservations')
       .select('*, clients(*)')
       .eq('statut', 'Confirmée')
@@ -189,7 +184,7 @@ export default function Dashboard() {
     if (acompteUrgentError) console.error('Erreur acomptes urgents:', acompteUrgentError);
 
     // Soldes non payés avec échéance < 72h
-    const { data: soldesUrgents, error: soldeUrgentError } = await supabase
+    const { data: soldesUrgents, error: soldeUrgentError } = await supabaseClient  
       .from('reservations')  
       .select('*, clients(*)')
       .eq('statut', 'Acompte payé')

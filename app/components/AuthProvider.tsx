@@ -2,9 +2,9 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { User } from '@supabase/supabase-js';
+import { User, Session } from '@supabase/supabase-js';
 import { useRouter } from 'next/navigation';
+import { supabaseClient } from '../../lib/supabase';
 
 interface AuthContextType {
   user: User | null;
@@ -29,20 +29,19 @@ export const useAuth = () => {
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const supabase = createClientComponentClient();
   const router = useRouter();
 
   useEffect(() => {
     const getSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session } } = await supabaseClient.auth.getSession();
       setUser(session?.user ?? null);
       setLoading(false);
     };
 
     getSession();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+    const { data: { subscription } } = supabaseClient.auth.onAuthStateChange(
+      async (event: string, session: Session | null) => {
         setUser(session?.user ?? null);
         setLoading(false);
         
@@ -53,10 +52,10 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     );
 
     return () => subscription.unsubscribe();
-  }, [supabase.auth, router]);
+  }, [router]);
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    await supabaseClient.auth.signOut();
     router.push('/auth/login');
   };
 

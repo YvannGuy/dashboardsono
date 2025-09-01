@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { supabase } from '../../lib/supabase';
+import { supabaseClient } from '../../lib/supabase';
 
 interface AddExpenseFormProps {
   onExpenseAdded: () => void;
@@ -34,11 +34,11 @@ export default function AddExpenseForm({ onExpenseAdded }: AddExpenseFormProps) 
     setLoading(true);
 
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await supabaseClient.auth.getUser();
       if (!user) throw new Error('Utilisateur non connecté');
 
       // Créer la dépense
-      const { error } = await supabase
+      const { error } = await supabaseClient
         .from('expenses_simple')
         .insert({
           user_id: user.id,
