@@ -1,0 +1,10 @@
+{
+  "/depenses/page": "app/depenses/page.js",
+  "/clients/page": "app/clients/page.js",
+  "/reservations/page": "app/reservations/page.js",
+  "/reservations/new/page": "app/reservations/new/page.js",
+  "/reservations/[id]/page": "app/reservations/[id]/page.js",
+  "/paiements/page": "app/paiements/page.js",
+  "/packs/page": "app/packs/page.js",
+  "/page": "app/page.js"
+}
